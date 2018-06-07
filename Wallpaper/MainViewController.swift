@@ -50,21 +50,26 @@ class MainViewController: NSViewController {
     
     // MARK: -  Event
     @IBAction func handleSetWallpaperButton(_ sender: Any) {
-        guard let url = WallpaperManager.shared.saveImage(),
-            let main = NSScreen.main else {
-            return
-        }
-        do {
-            let defaultOptions: [NSWorkspace.DesktopImageOptionKey: Any] = [
-                .allowClipping: true,
-                .fillColor: NSColor.black,
-               .imageScaling: NSImageScaling.scaleAxesIndependently
-            ]
-            let opts = NSWorkspace.shared.desktopImageOptions(for: main) ?? defaultOptions
-            try NSWorkspace.shared.setDesktopImageURL(url, for: main, options: opts)
-        } catch let error {
-            print("Set wallpaper error:", error)
-        }
+        disableUI()
+        WallpaperManager.shared.saveImage(completion: { [weak self] (photoUrl, err) in
+            DispatchQueue.main.async {
+                self?.enableUI()
+                guard let url = photoUrl, let main = NSScreen.main else {
+                    return
+                }
+                do {
+                    let defaultOptions: [NSWorkspace.DesktopImageOptionKey: Any] = [
+                        .allowClipping: true,
+                        .fillColor: NSColor.black,
+                        .imageScaling: NSImageScaling.scaleAxesIndependently
+                    ]
+                    let opts = NSWorkspace.shared.desktopImageOptions(for: main) ?? defaultOptions
+                    try NSWorkspace.shared.setDesktopImageURL(url, for: main, options: opts)
+                } catch let error {
+                    print("Set wallpaper error:", error)
+                }
+            }
+        })
     }
     
     @IBAction func handleNextButton(_ sender: Any) {
@@ -77,8 +82,16 @@ class MainViewController: NSViewController {
     }
     
     @IBAction func handleDownloadButton(_ sender: Any) {
-        guard let url = WallpaperManager.shared.saveImage(toCache: false) else { return }
-        NSWorkspace.shared.openFile(url.path)
+        disableUI()
+        WallpaperManager.shared.saveImage(toCache: false) { [weak self] (photoUrl, err) in
+            DispatchQueue.main.async {
+                self?.enableUI()
+                guard self != nil, let url = photoUrl else {
+                    return
+                }
+                NSWorkspace.shared.open(url)
+            }
+        }
     }
     
     // MARK: - Helper

@@ -54,7 +54,7 @@ class WallpaperManager {
         if wallpaper != nil {
             // if local wallpaper exist, download
             guard let photoURL = getPhotoUrl(size, wallpaper!) else {
-                let err = NSError(domain: "", code: -2, userInfo: ["err": "local wallpaper'url is empty."])
+                let err = NSError(domain: "fetchPhoto", code: -2, userInfo: ["err": "local wallpaper'url is empty."])
                 completion(nil, wallpaper, err)
                 return
             }
@@ -76,7 +76,7 @@ class WallpaperManager {
                 self?.refreshCount = 0
                 
                 guard let photoURL = self?.getPhotoUrl(size, wallpaper!) else {
-                    let err = NSError(domain: "", code: -3, userInfo: ["err": "API wallpaper'url is empty."])
+                    let err = NSError(domain: "fetchPhoto", code: -3, userInfo: ["err": "API wallpaper'url is empty."])
                     completion(nil, wallpaper, err)
                     return
                 }
@@ -96,37 +96,44 @@ class WallpaperManager {
     ///
     /// - Parameters:
     ///   - toCache: save to cache directory if true, default is true.
-    ///   - image: image raw data.
+    ///   - completion: completion handler
     /// - Returns: local image url or nil if failed.
-    func saveImage(toCache: Bool = true) -> URL? {
-        guard let rawImage = currentPhotoData else { return nil }
-        do {
-            let baseDir: FileManager.SearchPathDirectory = toCache ? .cachesDirectory : .picturesDirectory
-            let picDir = try FileManager.default.url(for: baseDir, in: .userDomainMask, appropriateFor: nil, create: true)
-            let wallpaperDir = picDir.appendingPathComponent(WALLPAPER_DIR, isDirectory: true)
-            var isDir = ObjCBool(true)
-            if !FileManager.default.fileExists(atPath: wallpaperDir.path, isDirectory: &isDir)
-                || !isDir.boolValue {
-                do {
-                    try FileManager.default.createDirectory(at: wallpaperDir, withIntermediateDirectories: true, attributes: nil)
-                } catch let error {
-                    print("Create wallpaper dir failed:", error)
-                    return nil
-                }
+    func saveImage(toCache: Bool = true, completion: @escaping ((URL?, Error?) -> Void)) {
+        DispatchQueue.global().async { [weak self] in
+            guard self != nil, let rawImage = self?.currentPhotoData else {
+                let err = NSError(domain: "savePhoto", code: -2, userInfo: ["err": "No photo data."])
+                completion(nil, err)
+                return
             }
-            let uuid = NSUUID().uuidString
-            let beginOffset = Int(arc4random_uniform(UInt32(uuid.count > 10 ? uuid.count - 10 : 0)))
-            let begin = uuid.index(uuid.startIndex, offsetBy: beginOffset)
-            let end = uuid.count > 10 ? uuid.index(begin, offsetBy: 10) : uuid.endIndex
-            let filename = "unsplash_" + String(uuid[begin..<end]) + ".png"
-            let fileUrl = wallpaperDir.appendingPathComponent(filename)
-            let imageData = NSBitmapImageRep(data: rawImage)?.representation(using: .png, properties: [:])
-            try imageData?.write(to: fileUrl, options: .atomic)
-            return fileUrl
-        } catch let error {
-            print("Save image failed:", error)
+            do {
+                let baseDir: FileManager.SearchPathDirectory = toCache ? .cachesDirectory : .picturesDirectory
+                let picDir = try FileManager.default.url(for: baseDir, in: .userDomainMask, appropriateFor: nil, create: true)
+                let wallpaperDir = picDir.appendingPathComponent(self!.WALLPAPER_DIR, isDirectory: true)
+                var isDir = ObjCBool(true)
+                if !FileManager.default.fileExists(atPath: wallpaperDir.path, isDirectory: &isDir)
+                    || !isDir.boolValue {
+                    do {
+                        try FileManager.default.createDirectory(at: wallpaperDir, withIntermediateDirectories: true, attributes: nil)
+                    } catch let error {
+                        completion(nil, error)
+                        return
+                    }
+                }
+                let uuid = NSUUID().uuidString
+                let beginOffset = Int(arc4random_uniform(UInt32(uuid.count > 10 ? uuid.count - 10 : 0)))
+                let begin = uuid.index(uuid.startIndex, offsetBy: beginOffset)
+                let end = uuid.count > 10 ? uuid.index(begin, offsetBy: 10) : uuid.endIndex
+                let filename = "unsplash_" + String(uuid[begin..<end]) + ".png"
+                let fileUrl = wallpaperDir.appendingPathComponent(filename)
+                let imageData = NSBitmapImageRep(data: rawImage)?.representation(using: .png, properties: [:])
+                try imageData?.write(to: fileUrl, options: .atomic)
+                completion(fileUrl, nil)
+                return
+            } catch let error {
+                completion(nil, error)
+                return
+            }
         }
-        return nil
     }
     
     // MARK: - private
