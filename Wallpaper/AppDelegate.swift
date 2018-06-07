@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusBar() {
         
         if let button = statusItem.button {
-            button.image = NSImage(named: NSImage.Name("camera"))
+            button.image = NSImage(named: NSImage.Name("camera_icon"))
             button.action = #selector(handleStatusBarEvent(_:))
         }
     }
