@@ -11,6 +11,7 @@ import Cocoa
 class MainViewController: NSViewController {
 
     @IBOutlet weak var imageView: NSImageView!
+    @IBOutlet weak var indicator: NSProgressIndicator!
     @IBOutlet weak var setWallpaperButton: NSButton!
     @IBOutlet weak var nextButton: NSButton!
     @IBOutlet weak var creatorButton: NSButton!
@@ -26,6 +27,7 @@ class MainViewController: NSViewController {
     // MARK: - Data Source
     
     private func loadNextPhoto(completion: ((NSImage?) -> Void)?) {
+        disableUI()
         WallpaperManager.shared.fetchNextPhoto(.full) { (image, wallpaper, err) in
             guard let image = image, let wallpaper = wallpaper else {
                 if completion != nil {
@@ -36,6 +38,7 @@ class MainViewController: NSViewController {
                 return
             }
             DispatchQueue.main.async { [weak self] in
+                self?.enableUI()
                 guard self != nil else { return }
                 self!.imageView.image = image
                 self!.creatorButton.attributedTitle = self!.genCreatorTitle(wallpaper)
@@ -65,10 +68,7 @@ class MainViewController: NSViewController {
     }
     
     @IBAction func handleNextButton(_ sender: Any) {
-        disableUI()
-        loadNextPhoto { [weak self] image in
-            self?.enableUI()
-        }
+        loadNextPhoto(completion: nil)
     }
     
     @IBAction func handleCreatorButton(_ sender: Any) {
@@ -84,6 +84,8 @@ class MainViewController: NSViewController {
     // MARK: - Helper
     
     private func disableUI() {
+        indicator.startAnimation(nil)
+        indicator.isHidden = false
         let btns = [setWallpaperButton, nextButton, creatorButton, downloadButton]
         for btn in btns {
             btn?.isEnabled = false
@@ -91,6 +93,8 @@ class MainViewController: NSViewController {
     }
     
     private func enableUI() {
+        indicator.stopAnimation(nil)
+        indicator.isHidden = true
         let btns = [setWallpaperButton, nextButton, creatorButton, downloadButton]
         for btn in btns {
             btn?.isEnabled = true
