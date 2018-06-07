@@ -791,6 +791,20 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ooa-kv-SpU">
+                                <rect key="frame" x="357" y="324" width="38" height="38"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="38" id="RyM-bb-mCZ"/>
+                                    <constraint firstAttribute="width" constant="38" id="Y7Y-XY-Met"/>
+                                </constraints>
+                                <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="gear" imagePosition="only" alignment="center" inset="2" id="RcU-pa-FUc">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="handleSettingButton:" target="XfG-lQ-9wD" id="eVh-lk-3Uk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="eYR-cl-IYi" firstAttribute="top" secondItem="wvt-fj-aNW" secondAttribute="bottom" constant="10" id="2bE-LW-TXr"/>
@@ -798,7 +812,9 @@
                             <constraint firstItem="eYR-cl-IYi" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="15" id="5WO-j6-NeU"/>
                             <constraint firstItem="DiT-cz-skr" firstAttribute="centerX" secondItem="wvt-fj-aNW" secondAttribute="centerX" id="60A-QO-U0m"/>
                             <constraint firstItem="n6d-Lk-tMk" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="5" id="8d3-vK-qPR"/>
+                            <constraint firstItem="wvt-fj-aNW" firstAttribute="top" secondItem="ooa-kv-SpU" secondAttribute="bottom" constant="2" id="Djj-ed-Cb7"/>
                             <constraint firstAttribute="trailing" secondItem="AO2-KB-ege" secondAttribute="trailing" constant="15" id="LHa-Rk-N79"/>
+                            <constraint firstAttribute="trailing" secondItem="ooa-kv-SpU" secondAttribute="trailing" constant="5" id="U8Z-F2-9bj"/>
                             <constraint firstItem="n6d-Lk-tMk" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="W7s-R5-Ddq"/>
                             <constraint firstItem="AO2-KB-ege" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="15" id="gdE-qv-PrR"/>
                             <constraint firstItem="wvt-fj-aNW" firstAttribute="top" secondItem="n6d-Lk-tMk" secondAttribute="bottom" constant="2" id="hlj-jY-WQ8"/>
@@ -809,6 +825,7 @@
                             <constraint firstAttribute="trailing" secondItem="wvt-fj-aNW" secondAttribute="trailing" id="oqf-kx-PrS"/>
                             <constraint firstItem="IEO-kQ-j8Q" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="pWO-65-9Zj"/>
                             <constraint firstItem="DiT-cz-skr" firstAttribute="centerY" secondItem="wvt-fj-aNW" secondAttribute="centerY" id="pXk-99-GUz"/>
+                            <constraint firstItem="ooa-kv-SpU" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="sG0-Pg-pZD"/>
                         </constraints>
                     </view>
                     <connections>
@@ -818,6 +835,7 @@
                         <outlet property="indicator" destination="DiT-cz-skr" id="Lxq-jy-Kww"/>
                         <outlet property="nextButton" destination="09R-Hu-V6E" id="ppy-vp-lHY"/>
                         <outlet property="setWallpaperButton" destination="QSp-ef-tMi" id="yIe-eW-1bt"/>
+                        <outlet property="settingButton" destination="ooa-kv-SpU" id="h59-2r-90H"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -827,5 +845,6 @@
     </scenes>
     <resources>
         <image name="camera" width="17" height="15"/>
+        <image name="gear" width="15" height="15"/>
     </resources>
 </document>

@@ -16,6 +16,7 @@ class MainViewController: NSViewController {
     @IBOutlet weak var nextButton: NSButton!
     @IBOutlet weak var creatorButton: NSButton!
     @IBOutlet weak var downloadButton: NSButton!
+    @IBOutlet weak var settingButton: NSButton!
     
     fileprivate var currentWallpaper: Wallpaper?
     
@@ -92,6 +93,25 @@ class MainViewController: NSViewController {
                 NSWorkspace.shared.open(url)
             }
         }
+    }
+    
+    @IBAction func handleSettingButton(_ sender: NSButton) {
+        let menu = NSMenu()
+        let aboutItem = NSMenuItem(title: "About", action: #selector(toggleAbout), keyEquivalent: "a")
+        menu.addItem(aboutItem)
+        let quitItem = NSMenuItem(title: "Quit", action: #selector(toggleQuit), keyEquivalent: "q")
+        menu.addItem(quitItem)
+        
+        let p = NSPoint(x: sender.frame.width / 2, y: sender.frame.height / 2)
+        menu.popUp(positioning: nil, at: p, in: sender)
+    }
+    
+    @objc private func toggleAbout() {
+        
+    }
+    
+    @objc private func toggleQuit() {
+        NSApplication.shared.terminate(nil)
     }
     
     // MARK: - Helper
