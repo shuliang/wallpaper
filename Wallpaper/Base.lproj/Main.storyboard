@@ -842,6 +842,91 @@
             </objects>
             <point key="canvasLocation" x="75" y="277"/>
         </scene>
+        <!--About View Controller-->
+        <scene sceneID="LlN-va-qo0">
+            <objects>
+                <customObject id="NKP-2q-YeG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <viewController storyboardIdentifier="AboutViewController" id="RCX-m3-qH7" customClass="AboutViewController" customModule="Wallpaper" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="6cs-6V-zgW">
+                        <rect key="frame" x="0.0" y="0.0" width="382" height="217"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lwW-90-s1v">
+                                <rect key="frame" x="10" y="20" width="362" height="177"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="L5E-4H-l5S">
+                                        <rect key="frame" x="173" y="162" width="17" height="15"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="camera" id="my6-gE-OJP"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TYt-7M-7Xn">
+                                        <rect key="frame" x="144" y="133" width="74" height="18"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Wallpaper" id="BZh-gj-acg">
+                                            <font key="font" metaFont="systemBold" size="14"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nai-vD-0eT">
+                                        <rect key="frame" x="146" y="106" width="70" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Version 1.0" id="vFL-Ng-GnD">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1AS-Kd-Wgs" customClass="NSx">
+                                        <rect key="frame" x="110" y="79" width="142" height="16"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Developed by @shuliang" id="UJz-d3-AVt">
+                                            <font key="font" metaFont="systemLight" size="12"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="8dC-sZ-tb9">
+                                        <rect key="frame" x="101" y="0.0" width="160" height="68"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="IkR-Aa-4hg">
+                                            <font key="font" metaFont="system"/>
+                                            <string key="title">icons: CC BY 4.0 License
+Thanks: Fontawesome
+camera icon
+gear icon</string>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="lwW-90-s1v" firstAttribute="leading" secondItem="6cs-6V-zgW" secondAttribute="leading" constant="10" id="6ET-LD-kLL"/>
+                            <constraint firstAttribute="bottom" secondItem="lwW-90-s1v" secondAttribute="bottom" constant="20" id="YfA-zi-Cxr"/>
+                            <constraint firstAttribute="trailing" secondItem="lwW-90-s1v" secondAttribute="trailing" constant="10" id="pFJ-Qr-62P"/>
+                            <constraint firstItem="lwW-90-s1v" firstAttribute="top" secondItem="6cs-6V-zgW" secondAttribute="top" constant="20" id="r7U-nn-oop"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="authorLabel" destination="1AS-Kd-Wgs" id="mrR-oA-by7"/>
+                        <outlet property="creditTextField" destination="8dC-sZ-tb9" id="B3D-z3-jfo"/>
+                        <outlet property="versionLabel" destination="Nai-vD-0eT" id="Zig-vY-J6Q"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="504" y="204.5"/>
+        </scene>
     </scenes>
     <resources>
         <image name="camera" width="17" height="15"/>

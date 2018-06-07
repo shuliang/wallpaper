@@ -13,6 +13,7 @@
 		73BFBB3F20C51E7E00F8BB11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73BFBB3D20C51E7E00F8BB11 /* Main.storyboard */; };
 		73BFBB4820C521B000F8BB11 /* WallpaperModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BFBB4720C521B000F8BB11 /* WallpaperModel.swift */; };
 		73BFBB4A20C5342800F8BB11 /* WallpaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BFBB4920C5342800F8BB11 /* WallpaperManager.swift */; };
+		73CC47BF20C921C100992512 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CC47BE20C921C100992512 /* AboutViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		73BFBB4120C51E7E00F8BB11 /* Wallpaper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wallpaper.entitlements; sourceTree = "<group>"; };
 		73BFBB4720C521B000F8BB11 /* WallpaperModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperModel.swift; sourceTree = "<group>"; };
 		73BFBB4920C5342800F8BB11 /* WallpaperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperManager.swift; sourceTree = "<group>"; };
+		73CC47BE20C921C100992512 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 				73BFBB3920C51E7E00F8BB11 /* MainViewController.swift */,
 				73BFBB4920C5342800F8BB11 /* WallpaperManager.swift */,
 				73BFBB4720C521B000F8BB11 /* WallpaperModel.swift */,
+				73CC47BE20C921C100992512 /* AboutViewController.swift */,
 				73BFBB3D20C51E7E00F8BB11 /* Main.storyboard */,
 				73BFBB3B20C51E7E00F8BB11 /* Assets.xcassets */,
 				73BFBB4020C51E7E00F8BB11 /* Info.plist */,
@@ -147,6 +150,7 @@
 				73BFBB4A20C5342800F8BB11 /* WallpaperManager.swift in Sources */,
 				73BFBB3A20C51E7E00F8BB11 /* MainViewController.swift in Sources */,
 				73BFBB4820C521B000F8BB11 /* WallpaperModel.swift in Sources */,
+				73CC47BF20C921C100992512 /* AboutViewController.swift in Sources */,
 				73BFBB3820C51E7E00F8BB11 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

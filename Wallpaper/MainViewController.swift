@@ -106,8 +106,13 @@ class MainViewController: NSViewController {
         menu.popUp(positioning: nil, at: p, in: sender)
     }
     
-    @objc private func toggleAbout() {
-        
+    @objc private func toggleAbout() {        
+        let sb = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+        let id = NSStoryboard.SceneIdentifier(rawValue: "AboutViewController")
+        guard let vc = sb.instantiateController(withIdentifier: id) as? NSViewController else {
+            fatalError("Instantiate About Controller failed.")
+        }
+        presentViewControllerAsModalWindow(vc)
     }
     
     @objc private func toggleQuit() {
