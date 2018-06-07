@@ -712,7 +712,7 @@
                                     <constraint firstAttribute="height" constant="250" id="Anh-OV-lQe"/>
                                     <constraint firstAttribute="width" constant="400" id="GDu-Qz-0G4"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" id="8zU-hC-f9N"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="8zU-hC-f9N"/>
                             </imageView>
                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="DiT-cz-skr">
                                 <rect key="frame" x="192" y="189" width="16" height="16"/>
