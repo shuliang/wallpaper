@@ -35,4 +35,15 @@ struct Wallpaper: Decodable {
     let description: String?
     let user: User?
     let urls: URLs?
+    
+    init() {
+        id = nil
+        description = nil
+        user = nil
+        urls = nil
+    }
+}
+
+enum WallpaperSize {
+    case raw, full, regular, small, thumb
 }
