@@ -17,9 +17,9 @@ class WallpaperManager {
     
     // user default
     private let PHOTO_JSON = "io.github.shuliang.photo_json"
+    private let REFRESH_COUNT = "io.github.shuliang.refresh_count"
     
-    private let BATCH_SIZE = 2
-    private var refreshCount = 0
+    private let BATCH_SIZE = 30
     
     private var currentWallpaper: Wallpaper?
     
@@ -109,10 +109,11 @@ class WallpaperManager {
     private func retrieveNextWallpaperModel(completion: @escaping (Wallpaper?, Error?) -> Void) {
         var wallpaper: Wallpaper?
         // get wallpaper from local storage
+        var refreshCount = UserDefaults.standard.integer(forKey: REFRESH_COUNT)
+        refreshCount += 1
         if refreshCount < BATCH_SIZE {
             if let m = retrieveLocalWallpaper(refreshCount) {
                 wallpaper = m
-                refreshCount += 1
             } else {
                 let begin = refreshCount
                 var stop = refreshCount
@@ -123,22 +124,23 @@ class WallpaperManager {
                         break
                     }
                 }
-                refreshCount = stop + 1
+                refreshCount = stop
             }
         }
         if wallpaper != nil {
+            UserDefaults.standard.set(refreshCount, forKey: REFRESH_COUNT)
             completion(wallpaper, nil)
             return
         }
         
         // if getting local wallpaper failed, fetch from API
         fetchAndStoreRandomWallpapersJSON { [weak self] (photos, err) in
-            guard let wallpapers = photos else {
+            guard self != nil, let wallpapers = photos else {
                 completion(nil, err)
                 return
             }
             wallpaper = wallpapers.first!
-            self?.refreshCount = 0
+            UserDefaults.standard.set(0, forKey: self!.REFRESH_COUNT)
             completion(wallpaper, nil)
         }
     }
