@@ -1,0 +1,49 @@
+#+TITLE: Wallpaper
+#+OPTIONS: author:nil date:nil
+
+[[images/screen_capture.png]]
+
+This experimental project downloads photo from [[https://unsplash.com][unsplash]] and set wallpaper for your Mac,
+it's mainly inspired by and mimics [[https://itunes.apple.com/cn/app/unsplash-wallpapers/id1284863847?l=en&mt=12][Unsplash Wallpaper]] with some minor differences:
+
+- Download photo to =~/Pictures/Wallpapers/= other than =~/Download/=.
+- Auto open download photo.
+- +Set wallpaper only for currrent desktop.+\\
+  [[https://itunes.apple.com/cn/app/unsplash-wallpapers/id1284863847?l=en&mt=12][Unsplash Wallpaper]] introduced the same feature at =Version 1.1= on =02 June 2018=.
+
+* How to use
+Clone this project, open =Wallpaper.xcodeproj= with Xcode and press =⌘+R=.
+It'll just run, no third party libs, no =Cocoapods= or =Carthage= configurations,
+friendly for beginners.
+
+It's originally written with =Swift4.1=, built with =Xcode 9.4=, deployment targeted at
+=macOS 10.11=, tested with macOS High Sierra (=10.13.5=). If you run into any trouble,
+please file an [[https://github.com/shuliang/wallpaper/issues][issue]].
+
+At present, =wallpaper= is a demo app which is limitd to =50 requests= per hour to
+unsplash regulation, so it may fail when loading photos. For better user experience,
+I recommand you to apply for your own *Access Key* on [[https://unsplash.com/oauth/applications][Unsplash]], replace current
+=CLIENT_ID= in =WallpaperManager.swift= and rebuild this project.
+
+* Todo
+- [ ] apply for unsplash production permission
+- [ ] install from Homebrew
+- [ ] preferences page
+- [ ] auto change wallpaper periodically
+- [ ] launch on system startup
+
+* Thanks
+The [[https://itunes.apple.com/cn/app/unsplash-wallpapers/id1284863847?l=en&mt=12][Unsplash Wallpaper]] is really awesome, but it can only set
+wallpaper for all desktops (version 1.1 can set wallpaper separately),
+this's inconvenient and gives me the idea to write this demo.
+
+Thanks [[https://unsplash.com][unsplash]] and all creators of those *breathtaking* photos.
+
+The [[https://fontawesome.com/icons/camera?style=solid][camera icon]] and [[https://fontawesome.com/icons/cog?style=solid][gear icon]] download from [[https://fontawesome.com/][Font awesome]],
+they're licensed under the [[https://creativecommons.org/licenses/by/4.0/][CC By 4.0 License]].
+
+Any using, try to running, pull request, comment, fork or download of
+this project is appreciated.
+
+* License
+MIT license, see [[file:LICENSE][LICENSE]].
