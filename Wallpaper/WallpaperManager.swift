@@ -21,88 +21,56 @@ class WallpaperManager {
     private let BATCH_SIZE = 2
     private var refreshCount = 0
     
-    private var currentPhotoData: Data?
+    private var currentWallpaper: Wallpaper?
     
     static let shared = WallpaperManager()
     private init() {}
     
-    
     // MARK: - Fetch Data
     
-    func fetchNextPhoto(_ size: WallpaperSize = .full, completion: @escaping (NSImage?, Wallpaper?, Error?) -> Void) {
-        var wallpaper: Wallpaper?
-        
-        // get wallpaper from local storage
-        if refreshCount < BATCH_SIZE {
-            if let m = retrieveLocalWallpaper(refreshCount) {
-                wallpaper = m
-                refreshCount += 1
-            } else {
-                let begin = refreshCount
-                var stop = refreshCount
-                for i in begin..<BATCH_SIZE {
-                    if let m = retrieveLocalWallpaper(i) {
-                        wallpaper = m
-                        stop = i
-                        break
-                    }
-                }
-                refreshCount = stop + 1
-            }
-        }
-       
-        if wallpaper != nil {
-            // if local wallpaper exist, download
-            guard let photoURL = getPhotoUrl(size, wallpaper!) else {
-                let err = NSError(domain: "fetchPhoto", code: -2, userInfo: ["err": "local wallpaper'url is empty."])
-                completion(nil, wallpaper, err)
+    
+    /// Fetch next photo model from local or API,
+    /// then download photo of particular size, hold it in memory.
+    ///
+    /// - Parameters:
+    ///   - size: wallpaper size, default is `.small`
+    ///   - completion: (image, wallpaper model, error or nil)
+    func fetchNextPhoto(_ size: WallpaperSize = .small, completion: @escaping (NSImage?, Wallpaper?, Error?) -> Void) {
+        retrieveNextWallpaperModel { [weak self] (model, error) in
+            self?.currentWallpaper = model
+            guard self != nil, let wallpaper = model else {
+                completion(nil, nil, error)
                 return
             }
-            fetchPhoto(photoURL) { (image, err) in
-                guard let image = image else {
-                    completion(nil, wallpaper, err)
+            self?.downloadPhoto(size, wallpaper) { (data, error) in
+                guard data != nil, let image = NSImage(data: data!) else {
+                    completion(nil, wallpaper, error)
                     return
                 }
                 completion(image, wallpaper, nil)
             }
-        } else {
-             // if getting local wallpaper failed, fetch from API
-            fetchAndStoreRandomwallpapersJSON { [weak self] (photos, err) in
-                guard let wallpapers = photos else {
-                    completion(nil, nil, err)
-                    return
-                }
-                wallpaper = wallpapers.first!
-                self?.refreshCount = 0
-                
-                guard let photoURL = self?.getPhotoUrl(size, wallpaper!) else {
-                    let err = NSError(domain: "fetchPhoto", code: -3, userInfo: ["err": "API wallpaper'url is empty."])
-                    completion(nil, wallpaper, err)
-                    return
-                }
-                self?.fetchPhoto(photoURL) { (image, err) in
-                    guard let image = image else {
-                        completion(nil, wallpaper, err)
-                        return
-                    }
-                    completion(image, wallpaper, nil)
-                }
-            }
         }
     }
     
-    /// Save `currentPhotoData` to local path, if `toCache = true` save image to cache directory,
+    /// Save image data of particular size to local path,
+    /// if `toCache = true`, save image to cache directory,
     /// otherwise save to `~/Pictures/Wallpaper/unsplash_uuid_name.png`.
     ///
     /// - Parameters:
-    ///   - toCache: save to cache directory if true, default is true.
-    ///   - completion: completion handler
+    ///   - size: wallpaper size, default size is `.full`
+    ///   - toCache: save to cache directory if true, default is `true`.
+    ///   - completion: (url: local storage url, error or nil)
     /// - Returns: local image url or nil if failed.
-    func saveImage(toCache: Bool = true, completion: @escaping ((URL?, Error?) -> Void)) {
-        DispatchQueue.global().async { [weak self] in
-            guard self != nil, let rawImage = self?.currentPhotoData else {
-                let err = NSError(domain: "savePhoto", code: -2, userInfo: ["err": "No photo data."])
-                completion(nil, err)
+    /// - Warning: Call `fetchNextPhoto` first to generate wallpaper model, or it returns nil.
+    func savePhoto(_ size: WallpaperSize = .full, toCache: Bool = true, completion: @escaping ((URL?, Error?) -> Void)) {
+        guard let wallpaper = currentWallpaper else {
+            let err = NSError(domain: "savePhoto", code: -1, userInfo: ["err": "No wallpaper model."])
+            completion(nil, err)
+            return
+        }
+        downloadPhoto(size, wallpaper) { [weak self] (data, error) in
+            guard self != nil, let rawImage = data else {
+                completion(nil, error)
                 return
             }
             do {
@@ -138,6 +106,43 @@ class WallpaperManager {
     
     // MARK: - private
     
+    private func retrieveNextWallpaperModel(completion: @escaping (Wallpaper?, Error?) -> Void) {
+        var wallpaper: Wallpaper?
+        // get wallpaper from local storage
+        if refreshCount < BATCH_SIZE {
+            if let m = retrieveLocalWallpaper(refreshCount) {
+                wallpaper = m
+                refreshCount += 1
+            } else {
+                let begin = refreshCount
+                var stop = refreshCount
+                for i in begin..<BATCH_SIZE {
+                    if let m = retrieveLocalWallpaper(i) {
+                        wallpaper = m
+                        stop = i
+                        break
+                    }
+                }
+                refreshCount = stop + 1
+            }
+        }
+        if wallpaper != nil {
+            completion(wallpaper, nil)
+            return
+        }
+        
+        // if getting local wallpaper failed, fetch from API
+        fetchAndStoreRandomWallpapersJSON { [weak self] (photos, err) in
+            guard let wallpapers = photos else {
+                completion(nil, err)
+                return
+            }
+            wallpaper = wallpapers.first!
+            self?.refreshCount = 0
+            completion(wallpaper, nil)
+        }
+    }
+    
     private func retrieveLocalWallpaper(_ index: Int) -> Wallpaper? {
         guard let data = UserDefaults.standard.object(forKey: PHOTO_JSON) as? Data else {
             return nil
@@ -153,7 +158,7 @@ class WallpaperManager {
         return nil
     }
     
-    private func fetchAndStoreRandomwallpapersJSON(completion: @escaping ([Wallpaper]?, Error?) -> Void) {
+    private func fetchAndStoreRandomWallpapersJSON(completion: @escaping ([Wallpaper]?, Error?) -> Void) {
         let url = BASE_URL + "random"
             + "?client_id=\(CLIENT_ID)"
             + "&count=\(BATCH_SIZE)"
@@ -174,16 +179,19 @@ class WallpaperManager {
         }.resume()
     }
     
-    /// fetch photo from URL, update `self.currentPhotoData`
-    private func fetchPhoto(_ url: URL, completion: @escaping (NSImage?, Error?) -> Void) {
-        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+    /// download photo from URL
+    private func downloadPhoto(_ size: WallpaperSize, _ wallpaper: Wallpaper, completion: @escaping (Data?, Error?) -> Void) {
+        guard let photoURL = getPhotoUrl(size, wallpaper) else {
+            let err = NSError(domain: "downloadPhoto", code: -1, userInfo: ["err": "wallpaper'url is empty."])
+            completion(nil, err)
+            return
+        }
+        URLSession.shared.dataTask(with: photoURL) { [weak self] (data, response, error) in
             guard self != nil, let data = data else {
                 completion(nil, error)
                 return
             }
-            self!.currentPhotoData = data
-            let image = NSImage(data: data)
-            completion(image, nil)
+            completion(data, nil)
         }.resume()
     }
     
@@ -203,5 +211,4 @@ class WallpaperManager {
             return wallpaper.urls?.thumb
         }
     }
-
 }

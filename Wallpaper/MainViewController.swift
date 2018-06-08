@@ -29,7 +29,7 @@ class MainViewController: NSViewController {
     
     private func loadNextPhoto(completion: ((NSImage?) -> Void)?) {
         disableUI()
-        WallpaperManager.shared.fetchNextPhoto(.full) { (image, wallpaper, err) in
+        WallpaperManager.shared.fetchNextPhoto(.small) { (image, wallpaper, err) in
             guard let image = image, let wallpaper = wallpaper else {
                 if completion != nil {
                     DispatchQueue.main.async {
@@ -52,7 +52,7 @@ class MainViewController: NSViewController {
     // MARK: -  Event
     @IBAction func handleSetWallpaperButton(_ sender: Any) {
         disableUI()
-        WallpaperManager.shared.saveImage(completion: { [weak self] (photoUrl, err) in
+        WallpaperManager.shared.savePhoto(.full, toCache: true) { [weak self] (photoUrl, err) in
             DispatchQueue.main.async {
                 self?.enableUI()
                 guard let url = photoUrl, let main = NSScreen.main else {
@@ -70,7 +70,7 @@ class MainViewController: NSViewController {
                     print("Set wallpaper error:", error)
                 }
             }
-        })
+        }
     }
     
     @IBAction func handleNextButton(_ sender: Any) {
@@ -84,7 +84,7 @@ class MainViewController: NSViewController {
     
     @IBAction func handleDownloadButton(_ sender: Any) {
         disableUI()
-        WallpaperManager.shared.saveImage(toCache: false) { [weak self] (photoUrl, err) in
+        WallpaperManager.shared.savePhoto(.full, toCache: false) { [weak self] (photoUrl, err) in
             DispatchQueue.main.async {
                 self?.enableUI()
                 guard self != nil, let url = photoUrl else {
