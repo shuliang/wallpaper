@@ -140,6 +140,8 @@ class MainViewController: NSViewController {
         let creator = wallpaper.user?.name ?? wallpaper.user?.username ?? "Anonymous"
         let attr = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 13, weight: .semibold)]
         str.append(NSAttributedString(string: creator, attributes: attr))
+        str.append(NSAttributedString(string: " on "))
+        str.append(NSAttributedString(string: "Unsplash", attributes: attr))
         return str
     }
 }
