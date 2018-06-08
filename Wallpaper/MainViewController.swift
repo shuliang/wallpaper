@@ -18,7 +18,7 @@ class MainViewController: NSViewController {
     @IBOutlet weak var downloadButton: NSButton!
     @IBOutlet weak var settingButton: NSButton!
     
-    fileprivate var currentWallpaper: Wallpaper?
+    private var currentWallpaper: Wallpaper?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,17 +29,13 @@ class MainViewController: NSViewController {
     
     private func loadNextPhoto(completion: ((NSImage?) -> Void)?) {
         disableUI()
-        WallpaperManager.shared.fetchNextPhoto(.small) { (image, wallpaper, err) in
-            guard let image = image, let wallpaper = wallpaper else {
-                if completion != nil {
-                    DispatchQueue.main.async {
-                        completion?(nil)
-                    }
-                }
-                return
-            }
+        WallpaperManager.shared.fetchNextPhoto(.small) { (img, model, err) in
             DispatchQueue.main.async { [weak self] in
                 self?.enableUI()
+                guard self != nil, let image = img, let wallpaper = model else {
+                    completion?(nil)
+                    return
+                }
                 guard self != nil else { return }
                 self!.imageView.image = image
                 self!.creatorButton.attributedTitle = self!.genCreatorTitle(wallpaper)

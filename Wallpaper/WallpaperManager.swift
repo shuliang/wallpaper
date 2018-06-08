@@ -26,8 +26,7 @@ class WallpaperManager {
     static let shared = WallpaperManager()
     private init() {}
     
-    // MARK: - Fetch Data
-    
+    // MARK: - Fetch Data    
     
     /// Fetch next photo model from local or API,
     /// then download photo of particular size, hold it in memory.
