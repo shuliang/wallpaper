@@ -22,6 +22,9 @@ class WallpaperManager {
     private let BATCH_SIZE = 30
     
     private var currentWallpaper: Wallpaper?
+    /// Hold current saved photo Url, avoid requesting same API twice.
+    /// Reset to nil when loading next photo
+    private var currentSavedPhotoUrl : URL?
     
     static let shared = WallpaperManager()
     private init() {}
@@ -35,6 +38,7 @@ class WallpaperManager {
     ///   - size: wallpaper size, default is `.small`
     ///   - completion: (image, wallpaper model, error or nil)
     func fetchNextPhoto(_ size: WallpaperSize = .small, completion: @escaping (NSImage?, Wallpaper?, Error?) -> Void) {
+        currentSavedPhotoUrl = nil
         retrieveNextWallpaperModel { [weak self] (model, error) in
             self?.currentWallpaper = model
             guard self != nil, let wallpaper = model else {
@@ -62,38 +66,37 @@ class WallpaperManager {
     /// - Returns: local image url or nil if failed.
     /// - Warning: Call `fetchNextPhoto` first to generate wallpaper model, or it returns nil.
     func savePhoto(_ size: WallpaperSize = .full, toCache: Bool = true, completion: @escaping ((URL?, Error?) -> Void)) {
+        // check cached photo url
+        if let url = currentSavedPhotoUrl,
+            let _ = NSImage(contentsOf: url),
+            let desUrl = createLocalWallpaperUrl(toCache: false) {
+            do {
+                try FileManager.default.copyItem(at: url, to: desUrl)
+                completion(desUrl, nil)
+                return
+            } catch let error {
+                print("Copy cached photo failed, try to download again:", error)
+            }
+            // no return here, download photo directly
+        }
+        
+        // no cached photo url, download the photo
         guard let wallpaper = currentWallpaper else {
             let err = NSError(domain: "savePhoto", code: -1, userInfo: ["err": "No wallpaper model."])
             completion(nil, err)
             return
         }
         downloadPhoto(size, wallpaper) { [weak self] (data, error) in
-            guard self != nil, let rawImage = data else {
+            guard self != nil,
+                let rawImage = data,
+                let fileUrl = self?.createLocalWallpaperUrl(toCache: toCache) else {
                 completion(nil, error)
                 return
             }
             do {
-                let baseDir: FileManager.SearchPathDirectory = toCache ? .cachesDirectory : .picturesDirectory
-                let picDir = try FileManager.default.url(for: baseDir, in: .userDomainMask, appropriateFor: nil, create: true)
-                let wallpaperDir = picDir.appendingPathComponent(self!.WALLPAPER_DIR, isDirectory: true)
-                var isDir = ObjCBool(true)
-                if !FileManager.default.fileExists(atPath: wallpaperDir.path, isDirectory: &isDir)
-                    || !isDir.boolValue {
-                    do {
-                        try FileManager.default.createDirectory(at: wallpaperDir, withIntermediateDirectories: true, attributes: nil)
-                    } catch let error {
-                        completion(nil, error)
-                        return
-                    }
-                }
-                let uuid = NSUUID().uuidString
-                let beginOffset = Int(arc4random_uniform(UInt32(uuid.count > 10 ? uuid.count - 10 : 0)))
-                let begin = uuid.index(uuid.startIndex, offsetBy: beginOffset)
-                let end = uuid.count > 10 ? uuid.index(begin, offsetBy: 10) : uuid.endIndex
-                let filename = "unsplash_" + String(uuid[begin..<end]) + ".png"
-                let fileUrl = wallpaperDir.appendingPathComponent(filename)
                 let imageData = NSBitmapImageRep(data: rawImage)?.representation(using: .png, properties: [:])
                 try imageData?.write(to: fileUrl, options: .atomic)
+                self?.currentSavedPhotoUrl = fileUrl
                 completion(fileUrl, nil)
                 return
             } catch let error {
@@ -197,6 +200,33 @@ class WallpaperManager {
     }
     
     // MARK: helper
+    
+    private func createLocalWallpaperUrl(toCache: Bool) -> URL? {
+        do {
+            let baseDir: FileManager.SearchPathDirectory = toCache ? .cachesDirectory : .picturesDirectory
+            let picDir = try FileManager.default.url(for: baseDir, in: .userDomainMask, appropriateFor: nil, create: true)
+            let wallpaperDir = picDir.appendingPathComponent(WALLPAPER_DIR, isDirectory: true)
+            var isDir = ObjCBool(true)
+            if !FileManager.default.fileExists(atPath: wallpaperDir.path, isDirectory: &isDir)
+                || !isDir.boolValue {
+                do {
+                    try FileManager.default.createDirectory(at: wallpaperDir, withIntermediateDirectories: true, attributes: nil)
+                } catch let error {
+                    print("Create wallpaper directory faild:", error)
+                    return nil
+                }
+            }
+            let uuid = NSUUID().uuidString
+            let beginOffset = Int(arc4random_uniform(UInt32(uuid.count > 10 ? uuid.count - 10 : 0)))
+            let begin = uuid.index(uuid.startIndex, offsetBy: beginOffset)
+            let end = uuid.count > 10 ? uuid.index(begin, offsetBy: 10) : uuid.endIndex
+            let filename = "unsplash_" + String(uuid[begin..<end]) + ".png"
+            return wallpaperDir.appendingPathComponent(filename)
+        } catch let error {
+            print("Create wallpaper file path faild:", error)
+            return nil
+        }
+    }
     
     private func getPhotoUrl(_ size: WallpaperSize, _ wallpaper: Wallpaper) -> URL? {
         switch size {
