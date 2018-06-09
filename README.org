@@ -12,6 +12,10 @@ it's mainly inspired by and mimics [[https://itunes.apple.com/cn/app/unsplash-wa
   [[https://itunes.apple.com/cn/app/unsplash-wallpapers/id1284863847?l=en&mt=12][Unsplash Wallpaper]] introduced the same feature at =Version 1.1= on =02 June 2018=.
 
 * How to use
+** download app directly
+You can download the zip file [[https://github.com/shuliang/wallpaper/releases][here]], unzip and run it.
+
+** build from source
 Clone this project, open =Wallpaper.xcodeproj= with Xcode and press =⌘+R=.
 It'll just run, no third party libs, no =Cocoapods= or =Carthage= configurations,
 friendly for beginners.
@@ -42,7 +46,7 @@ Thanks [[https://unsplash.com][unsplash]] and all creators of those *breathtakin
 The [[https://fontawesome.com/icons/camera?style=solid][camera icon]] and [[https://fontawesome.com/icons/cog?style=solid][gear icon]] download from [[https://fontawesome.com/][Font awesome]],
 they're licensed under the [[https://creativecommons.org/licenses/by/4.0/][CC By 4.0 License]].
 
-Any using, try to running, pull request, comment, fork or download of
+Any using, try to running, pull request, comment, suggestion, fork or download of
 this project is appreciated.
 
 * License
